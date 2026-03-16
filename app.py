@@ -1,6 +1,3 @@
-Here is the content for your `app.py` file:
-
-```python
 import streamlit as st
 import pandas as pd
 import joblib
@@ -72,4 +69,3 @@ if st.button('Predict Anemia Type'):
     prediction = model.predict(input_data)
 
     st.success(f'Predicted Anemia Type: {prediction[0]}')
-```
