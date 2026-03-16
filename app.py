@@ -1,4 +1,6 @@
+Here is the content for your `app.py` file:
 
+```python
 import streamlit as st
 import pandas as pd
 import joblib
@@ -62,7 +64,7 @@ if st.button('Predict Anemia Type'):
     # 3. Scale numerical features
     numerical_cols = [col for col in model_features if col not in ['Gender', 'Age_Group_Adult', 'Age_Group_Child']]
     input_data[numerical_cols] = scaler.transform(input_data[numerical_cols])
-    
+
     # Ensure the order of columns matches the training data
     input_data = input_data[model_features]
 
@@ -70,3 +72,4 @@ if st.button('Predict Anemia Type'):
     prediction = model.predict(input_data)
 
     st.success(f'Predicted Anemia Type: {prediction[0]}')
+```
