@@ -17,7 +17,7 @@ st.write('Enter patient details to predict anemia type.')
 # Input widgets for features
 gender_options = ['Male', 'Female']
 gender_input = st.radio('Gender', gender_options)
-age_input = st.slider('Age', 0, 90, 30) # Assuming age range 0-90
+age_input = st.number_input('Age', 0, 90, 30) # Assuming age range 0-90
 age_group_input = st.selectbox('Age Group', age_group_categories)
 hb_input = st.number_input('HB (g/dL)', min_value=0.0, max_value=20.0, value=12.0, step=0.1)
 mcv_input = st.number_input('MCV (fL)', min_value=50.0, max_value=120.0, value=90.0, step=0.1)
@@ -27,9 +27,17 @@ rdw_input = st.number_input('RDW (%)', min_value=10.0, max_value=25.0, value=14.
 mch_input = st.number_input('MCH (pg/RBC)', min_value=10.0, max_value=40.0, value=28.0, step=0.1)
 mchc_input = st.number_input('MCHC (g/dL)', min_value=20.0, max_value=40.0, value=33.0, step=0.1)
 reticulocyte_count_input = st.number_input('Reticulocyte Count (%)', min_value=0.0, max_value=5.0, value=1.0, step=0.01)
-green_king_index_input = st.number_input('Green & King Index', min_value=0.0, max_value=300.0, value=100.0, step=0.1)
 
 if st.button('Predict Anemia Type'):
+    # Calculate Green & King Index
+    if hb_input == 0:
+        st.error("HB (g/dL) cannot be zero for Green & King Index calculation.")
+        st.stop()
+    green_king_index_calculated = (mcv_input**2 * rdw_input) / (hb_input * 100)
+
+    # Classify based on Green & King Index
+    index_diagnosis = "Iron Deficiency" if green_king_index_calculated > 65 else "Beta Thalassemia Trait"
+
     # Create a DataFrame from inputs
     input_data = pd.DataFrame([{
         'Gender': gender_input,
@@ -43,7 +51,7 @@ if st.button('Predict Anemia Type'):
         'MCH (pg/RBC)': mch_input,
         'MCHC (g/dL)': mchc_input,
         'Reticulocyte Count (%)': reticulocyte_count_input,
-        'Green & King Index': green_king_index_input
+        'Green & King Index': green_king_index_calculated # Use calculated value
     }])
 
     # Preprocess the input data
@@ -69,3 +77,4 @@ if st.button('Predict Anemia Type'):
     prediction = model.predict(input_data)
 
     st.success(f'Predicted Anemia Type: {prediction[0]}')
+    st.info(f'Calculated Green & King Index: {green_king_index_calculated:.2f} (Interpretation: {index_diagnosis})')
